@@ -1,19 +1,29 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useLocation } from "react-router-dom";
 import ActivityData from "../activity-data/activity-data";
 import BaseInfoCard from "../baseinfo-card/baseinfo-card";
-import { Card } from "@mui/material";
 
 const UserDetails = () => {
   const location = useLocation();
   const { user } = location.state || {};
-  console.log("🚀 ~ UserDetails ~ user:", user);
+
+  const formattedName = user.name
+    .replace(/[@.]/g, " ")
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 
   return (
     <div>
       <div className="mb-2 text-3xl">
         Hello,
-        <strong className="">&nbsp;{user.name}</strong>
+        <strong className="">
+          &nbsp;
+          {formattedName
+            .split(" ")
+            .filter((word) => word !== "Devdynamics" && word !== "Ai")
+            .join(" ")}
+        </strong>
       </div>
 
       <BaseInfoCard data={user} />

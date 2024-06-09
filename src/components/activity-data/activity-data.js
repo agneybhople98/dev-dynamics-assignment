@@ -2,7 +2,6 @@ import React, { act, useEffect } from "react";
 import BarChart from "../bar-chart/bar-chart";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { useState } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -15,11 +14,9 @@ import CardContent from "@mui/material/CardContent";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 const ActivityData = ({ data }) => {
-  console.log("🚀 ~ ActivityData ~ data:", data.dayWiseActivity);
-
   return (
-    <div className="flex items-center w-full gap-3 ">
-      <div className="flex-1 ">
+    <div className="grid gap-4 lg:grid-cols-12 md:grid-cols-2">
+      <div className="lg:col-span-6 md:col-span-1">
         <Card>
           <CardContent>
             <DayWiseActivity dayWiseActivity={data.dayWiseActivity} />
@@ -27,7 +24,7 @@ const ActivityData = ({ data }) => {
         </Card>
       </div>
 
-      <div className="flex-1">
+      <div className="lg:col-span-6 md:col-span-1">
         <div className="flex items-center">
           <Card>
             <CardContent>
@@ -41,8 +38,6 @@ const ActivityData = ({ data }) => {
 };
 
 const TotalActivity = ({ totalActivity }) => {
-  console.log("🚀 ~ TotalActivity ~ totalActivity:", totalActivity);
-
   const labels = totalActivity.map((item) => item.name);
   const dataValues = totalActivity.map((item) => parseInt(item.value, 10));
 
@@ -100,12 +95,14 @@ const DayWiseActivity = ({ dayWiseActivity }) => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [filteredData, setFilteredData] = useState(dayWiseActivity);
 
+  const isDataValid = Array.isArray(filteredData) && filteredData.length > 0;
+
   useEffect(() => {
     if (selectedDate) {
       const filtered = dayWiseActivity.filter(
         (item) => item.date === selectedDate
       );
-      console.log("FILTERED DATA", filtered);
+
       setFilteredData(filtered);
     } else {
       setFilteredData(0);
@@ -116,6 +113,7 @@ const DayWiseActivity = ({ dayWiseActivity }) => {
     if (newValue && dayjs(newValue).isValid()) {
       const formattedDate = dayjs(newValue).format("YYYY-MM-DD");
       setSelectedDate(formattedDate);
+
       console.log("Selected date:", formattedDate);
     } else {
       console.log("Invalid date selected");
@@ -135,7 +133,13 @@ const DayWiseActivity = ({ dayWiseActivity }) => {
         </LocalizationProvider>
       </div>
 
-      <BarChart chartData={filteredData} />
+      {isDataValid ? (
+        <BarChart chartData={filteredData} />
+      ) : (
+        <div className="flex h-[300px] justify-center items-center">
+          Please choose a date to start with 6th May,2024 OR 7th May,2024
+        </div>
+      )}
     </div>
   );
 };

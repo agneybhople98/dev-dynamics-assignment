@@ -22,11 +22,13 @@ ChartJS.register(
 
 const BarChart = ({ chartData }) => {
   const labels = chartData[0]?.date;
+
   const datasets = chartData[0]?.items?.children?.map((item) => ({
-    label: item.label,
-    backgroundColor: item.fillColor,
-    data: item.count,
+    label: item?.label,
+    backgroundColor: item?.fillColor,
+    data: item?.count,
   }));
+
   const data = {
     labels: labels,
     datasets: datasets,

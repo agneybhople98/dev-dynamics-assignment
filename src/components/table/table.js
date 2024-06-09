@@ -9,10 +9,11 @@ import {
   Paper,
   Button,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "@mui/material/styles";
 
 const DataTable = ({ data }) => {
+  const theme = useTheme();
   const navigate = useNavigate();
   console.log("🚀 ~ DataTable ~ data:", data);
 
@@ -25,7 +26,7 @@ const DataTable = ({ data }) => {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
+            <TableCell>Username</TableCell>
             <TableCell>Total Activity</TableCell>
             <TableCell>Active Days</TableCell>
             <TableCell>Details</TableCell>
@@ -33,17 +34,30 @@ const DataTable = ({ data }) => {
         </TableHead>
         <TableBody>
           {data.map((item, index) => (
-            <TableRow key={index}>
+            <TableRow
+              className="cursor-pointer"
+              key={index}
+              onClick={() => handleButtonClick(item)}
+            >
               <TableCell>{item.name}</TableCell>
               <TableCell>{item.totalActivity.length}</TableCell>
               <TableCell>{item.activeDays.days}</TableCell>
               <TableCell>
                 <Button
-                  variant="contained"
+                  size="medium"
+                  variant="outline"
                   color="primary"
                   onClick={() => handleButtonClick(item)}
+                  sx={{
+                    borderColor: theme.palette.primary.main,
+                    color: theme.palette.primary.main,
+                    "&:hover": {
+                      borderColor: theme.palette.primary.main,
+                      backgroundColor: theme.palette.action.hover,
+                    },
+                  }}
                 >
-                  View More
+                  View details
                 </Button>
               </TableCell>
             </TableRow>
