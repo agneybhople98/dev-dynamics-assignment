@@ -12,11 +12,13 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import dummyData from "../datas/sample-data.json";
 import DataTable from "./table/table";
+import { useState } from "react";
 
 const settings = ["Profile", "Account", "Dashboard", "Logout"];
 
 function Dashboard() {
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [activityData, setActivityData] = React.useState(dummyData);
 
   const handleOpenUserMenu = (event) => {
@@ -27,14 +29,24 @@ function Dashboard() {
     setAnchorElUser(null);
   };
 
+  const rows = activityData.data.AuthorWorklog.rows;
+
+  // Filter rows based on the search query
+  const filteredRows = rows.filter((row) =>
+    Object.values(row).some((value) =>
+      String(value).toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
   return (
     <React.Fragment>
       <div className="flex items-center justify-between ">
         <div>
-          <SearchBar />
+          <SearchBar
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+          />
         </div>
-
-        {/* <ActivityData data={activityData.data.AuthorWorklog.rows} /> */}
 
         <div className="flex items-center gap-1">
           <IconButton aria-label="email">
@@ -47,15 +59,11 @@ function Dashboard() {
               <NotificationsIcon />
             </Badge>
           </IconButton>
-          {/* <IconButton aria-label="profile">
-          <AccountCircleIcon />
-        </IconButton> */}
 
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ pl: 1, mb: 1 }}>
                 <AccountCircleIcon sx={{ fontSize: 32 }} />
-                {/* <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" /> */}
               </IconButton>
             </Tooltip>
             <Menu
@@ -87,11 +95,13 @@ function Dashboard() {
       {/* All the main components */}
 
       <Box sx={{ mt: 2, mb: 5 }}>
-        <Typography variant="h6" gutterBottom>
-          Dashboard
-        </Typography>
-
-        <DataTable data={activityData.data.AuthorWorklog.rows} />
+        {filteredRows.length > 0 ? (
+          <DataTable data={filteredRows} />
+        ) : (
+          <div className="text-center h-[300px] flex justify-center items-center border-2 border-white">
+            No search results found
+          </div>
+        )}
       </Box>
     </React.Fragment>
   );

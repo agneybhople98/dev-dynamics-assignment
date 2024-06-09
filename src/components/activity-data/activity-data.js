@@ -2,7 +2,15 @@ import React, { act, useEffect } from "react";
 import BarChart from "../bar-chart/bar-chart";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { useState } from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
+import TextField from "@mui/material/TextField";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -10,25 +18,24 @@ const ActivityData = ({ data }) => {
   console.log("🚀 ~ ActivityData ~ data:", data.dayWiseActivity);
 
   return (
-    <div className="flex flex-col">
-      <DayWiseActivity dayWiseActivity={data.dayWiseActivity} />
-
-      <TotalActivity totalActivity={data.totalActivity} />
-      {/* <ul>
-        {data.map((activity, index) => (
-          <TotalActivity totalActivity={activity.totalActivity} />
-        ))}
-      </ul>
-      <div>
-        {data.map((activity, index) => (
-          <DayWiseActivity dayWiseActivity={activity.dayWiseActivity} />
-        ))}
+    <div className="flex items-center w-full gap-3 ">
+      <div className="flex-1 ">
+        <Card>
+          <CardContent>
+            <DayWiseActivity dayWiseActivity={data.dayWiseActivity} />
+          </CardContent>
+        </Card>
       </div>
-      <div>
-        {data.map((activity, index) => (
-          <ActiveDays activeDays={activity.activeDays} />
-        ))}
-      </div> */}
+
+      <div className="flex-1">
+        <div className="flex items-center">
+          <Card>
+            <CardContent>
+              <TotalActivity totalActivity={data.totalActivity} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 };
@@ -75,65 +82,62 @@ const TotalActivity = ({ totalActivity }) => {
         position: "top",
       },
       title: {
-        display: true,
+        display: false,
         text: "Activity Data",
       },
     },
   };
 
-  return <Pie data={data} options={options} />;
+  return (
+    <div className="mt-4">
+      <Pie data={data} options={options} />
+    </div>
+  );
 };
 
 const DayWiseActivity = ({ dayWiseActivity }) => {
   console.log("🚀 ~ DayWiseActivity ~ dayWiseActivity:", dayWiseActivity);
-  const [selectedDate, setSelectedDate] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [filteredData, setFilteredData] = useState(dayWiseActivity);
 
   useEffect(() => {
     if (selectedDate) {
-      alert(selectedDate);
       const filtered = dayWiseActivity.filter(
         (item) => item.date === selectedDate
       );
       console.log("FILTERED DATA", filtered);
       setFilteredData(filtered);
     } else {
-      setFilteredData(dayWiseActivity);
+      setFilteredData(0);
     }
   }, [selectedDate, dayWiseActivity]);
 
-  const handleDateChange = (e) => {
-    setSelectedDate(e.target.value);
+  const handleDateChange = (newValue) => {
+    if (newValue && dayjs(newValue).isValid()) {
+      const formattedDate = dayjs(newValue).format("YYYY-MM-DD");
+      setSelectedDate(formattedDate);
+      console.log("Selected date:", formattedDate);
+    } else {
+      console.log("Invalid date selected");
+    }
   };
 
   return (
     <div className="">
-      <div className="flex">
-        <div>{dayWiseActivity.date}</div>
-        <div>
-          <input type="date" value={selectedDate} onChange={handleDateChange} />
-        </div>
+      <div className="flex justify-end mb-3">
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Please pick a date"
+            value={selectedDate ? dayjs(selectedDate) : null}
+            onChange={handleDateChange}
+            renderInput={(params) => <TextField {...params} />}
+          />
+        </LocalizationProvider>
       </div>
+
       <BarChart chartData={filteredData} />
     </div>
   );
 };
-
-// const ActiveDays = ({ activeDays }) => {
-//   return (
-//     <div className="border">
-//       <h2>Active Days</h2>
-//       <p>Days: {activeDays.days}</p>
-//       <p>Burnout: {activeDays.isBurnOut ? "Yes" : "No"}</p>
-//       {activeDays.insight.length > 0 && (
-//         <ul>
-//           {activeDays.insight.map((insight, index) => (
-//             <li key={index}>{insight}</li>
-//           ))}
-//         </ul>
-//       )}
-//     </div>
-//   );
-// };
 
 export default ActivityData;

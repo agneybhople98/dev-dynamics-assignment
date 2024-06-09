@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import DataTable from "../table/table";
 import ActivityData from "../activity-data/activity-data";
+import BaseInfoCard from "../baseinfo-card/baseinfo-card";
+import { Card } from "@mui/material";
 
 const UserDetails = () => {
   const location = useLocation();
@@ -10,15 +11,16 @@ const UserDetails = () => {
 
   return (
     <div>
-      <h1>User Details</h1>
+      <div className="mb-2 text-3xl">
+        Hello,
+        <strong className="">&nbsp;{user.name}</strong>
+      </div>
 
-      {/* {name ? <p>Details for user: {name}</p> : <p>No user data provided.</p>} */}
+      <BaseInfoCard data={user} />
 
-      <div>Hello,{user.name}</div>
-
-      {/* <DataTable data={user.dayWiseActivity}></DataTable> */}
-
-      <ActivityData data={user} />
+      <div className="mt-4">
+        <ActivityData data={user} />
+      </div>
     </div>
   );
 };
