@@ -6,7 +6,6 @@ import SearchIcon from "@mui/icons-material/Search";
 const SearchBar = ({ searchQuery, setSearchQuery }) => {
   return (
     <TextField
-      sx={{ width: 400 }}
       variant="outlined"
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}

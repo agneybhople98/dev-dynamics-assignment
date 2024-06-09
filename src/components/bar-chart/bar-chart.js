@@ -45,7 +45,7 @@ const BarChart = ({ chartData }) => {
     },
   };
   return (
-    <div className="w-[500px] ">
+    <div className="md:w-full w-[400px]">
       <Bar data={data} options={options} />
     </div>
   );
